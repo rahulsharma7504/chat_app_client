@@ -39,19 +39,7 @@ const io = socketio(server, {
 
 // Connect to the server
 
-io.on('connection', (socket) => {
-    console.log('New WebSocket connection', socket.id);
 
-    // Set the user's socket connection
-    socket.on('status', (data) => {
-        console.log(data)
-    });
-
-    // Handle user disconnection
-    socket.on('disconnect', () => {
-        console.log('User disconnected');
-    });
-});
 // Connect to the database
 ConnectDB();
 
