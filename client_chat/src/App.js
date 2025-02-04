@@ -1,24 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Layout from './Layout/layout'; // Layout import kar rahe hain
+import ChatUser from './Pages/ChatUser';
+import Profile from './Pages/Profile';
+import Settings from './Pages/Settings';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> NEDNSDSJand save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router> {/* Router ko apne app mein wrap karte hain */}
+      <Layout> {/* Layout ko wrap karte hain */}
+        <Routes>
+          {/* Define your routes here */}
+          <Route path="/" element={<ChatUser />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </Layout>
+    </Router>
   );
 }
 

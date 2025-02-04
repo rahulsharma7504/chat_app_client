@@ -1,0 +1,75 @@
+/* Navbar Styling */
+.navbar {
+  background-color: #5d706a;
+  padding: 10px 20px;
+  margin-bottom: 15px;
+}
+
+/* Brand Logo Styling */
+.brand {
+  color: rgb(255, 255, 255);
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 40px; /* Adjust width as per your logo size */
+  height: auto;
+}
+
+/* Navbar Links */
+.navLinks {
+  color: #f0f0f0  ;
+  margin-left: auto; /* This ensures the Nav items align to the right */
+}
+
+.navLink {
+  color: #fff !important;
+  margin-right: 15px;
+  font-size: 1.1rem;
+}
+
+.navLink:hover {
+  color: #f0f0f0 !important;
+}
+
+/* Dropdown Menu */
+.navDropdown {
+  color: #fff;
+}
+
+/* Hamburger Icon Styling */
+.hamburgerIcon {
+  font-size: 2rem;
+  color: #fff;
+  transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.hamburgerToggle {
+  border: none;
+  background: none;
+}
+
+/* Mobile Menu */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    background-color: #333;
+    padding: 10px 0;
+  }
+
+  .navbar-collapse .navLink {
+    font-size: 1.2rem;
+    margin-right: 0;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .navbar-collapse .navLink:hover {
+    background-color: #444;
+  }
+
+  /* Mobile: Center the hamburger icon and the logo */
+  .navbar-toggler {
+    order: 1;
+  }
+}

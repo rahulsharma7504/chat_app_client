@@ -1,0 +1,191 @@
+/* General Styles */
+.settingsContainer {
+    padding: 16px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .heading {
+    font-size: 24px;
+    margin-bottom: 16px;
+    text-align: center;
+    color: #333;
+  }
+  
+  /* Account Settings */
+  .accountSettings {
+    margin-bottom: 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #f9f9f9;
+  }
+  
+  .accountSettings h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  
+  .accountSettings form div {
+    margin-bottom: 12px;
+  }
+  
+  .accountSettings label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .accountSettings input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .saveButton,
+  .deleteButton {
+    margin-top: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .saveButton {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .deleteButton {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* Notification Settings */
+  .notificationSettings {
+    margin-bottom: 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #f9f9f9;
+  }
+  
+  .notificationSettings h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  
+  .notificationSettings label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  /* Theme Customization */
+  .themeCustomization {
+    margin-bottom: 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #f9f9f9;
+  }
+  
+  .themeCustomization h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  
+  .themeCustomization button {
+    padding: 10px 16px;
+    margin-right: 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .themeCustomization button.activeButton {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .themeCustomization button:not(.activeButton) {
+    background-color: #ddd;
+    color: #333;
+  }
+  
+  /* Login Activity */
+  .loginActivity {
+    margin-bottom: 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #f9f9f9;
+  }
+  
+  .loginActivity h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  
+  .loginActivity ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .loginActivity li {
+    padding: 12px;
+    margin-bottom: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f3f3f3;
+  }
+  
+  .loginActivity li strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #555;
+  }
+  
+  .logoutButton {
+    margin-top: 16px;
+    padding: 10px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .settingsContainer {
+      padding: 12px;
+    }
+  
+    .heading {
+      font-size: 20px;
+    }
+  
+    .accountSettings, 
+    .notificationSettings, 
+    .themeCustomization, 
+    .loginActivity {
+      padding: 12px;
+    }
+  
+    .saveButton,
+    .deleteButton,
+    .themeCustomization button,
+    .logoutButton {
+      width: 100%;
+      margin: 8px 0;
+    }
+  }
+  
