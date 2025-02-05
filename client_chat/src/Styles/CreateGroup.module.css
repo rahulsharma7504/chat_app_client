@@ -1,0 +1,161 @@
+/* Container for the entire modal */
+.modalContent {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  /* Modal Header */
+  .modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .modalTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .modalIcon {
+    color: #007bff;
+    margin-right: 10px;
+  }
+  
+  /* Form Styling */
+  .formGroup {
+    margin-bottom: 20px;
+  }
+  
+  .formLabel {
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .formControl {
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    margin-top: 5px;
+  }
+  
+  .formControl:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* File input preview image */
+  .imagePreview {
+    margin-top: 10px;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  /* Dropdown Button */
+  .dropdownButton {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+  }
+  
+  .dropdownButton:hover {
+    background-color: #e9e9e9;
+  }
+  
+  /* Selected User List */
+  .selectedUsersList {
+    margin-top: 10px;
+  }
+  
+  .selectedUserItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f1f1f1;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 1rem;
+  }
+  
+  .selectedUserItem span {
+    color: #333;
+  }
+  
+  .selectedUserItem .iconRemove {
+    color: red;
+    cursor: pointer;
+  }
+  
+  /* Modal Footer */
+  .modalFooter {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .modalFooter button {
+    width: 48%;
+  }
+  
+  .modalFooter .btnPrimary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+  }
+  
+  .modalFooter .btnPrimary:hover {
+    background-color: #0056b3;
+  }
+  
+  .modalFooter .btnSecondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+  }
+  
+  .modalFooter .btnSecondary:hover {
+    background-color: #5a6268;
+  }
+  
+  /* Responsive Design for Mobile */
+  @media (max-width: 768px) {
+    .modalContent {
+      padding: 15px;
+    }
+  
+    .modalHeader {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .modalTitle {
+      font-size: 1.25rem;
+    }
+  
+    .dropdownButton,
+    .formControl {
+      font-size: 0.9rem;
+    }
+  
+    .selectedUserItem {
+      font-size: 0.9rem;
+    }
+  
+    .imagePreview {
+      width: 80px;
+      height: 80px;
+    }
+  }
+  

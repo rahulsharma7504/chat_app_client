@@ -1,6 +1,6 @@
 /* Chat App Container */
 .chatApp {
-  height: 100vh;
+  height: 86vh;
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
