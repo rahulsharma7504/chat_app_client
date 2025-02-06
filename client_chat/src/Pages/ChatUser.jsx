@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Tab, Nav, Form, Button } from "react-bootstrap";
 import { FaUserCircle, FaUsers, FaArrowLeft, FaSmile, FaPaperclip, FaPaperPlane } from "react-icons/fa";
 import styles from "../Styles/ChatUser.module.css";
 import CreateGroupModal from "../Components/CreateGroup";
-
+import socket from './../Components/Socket/Socket';
+import { useAuth } from "../Contexts/AuthContext";
 const ChatUser = () => {
+    const { isAuthenticated,users } = useAuth();
     const [activeTab, setActiveTab] = useState("users");
     const [selectedChat, setSelectedChat] = useState(null);
     const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
@@ -18,14 +20,18 @@ const ChatUser = () => {
     ];
 
 
-    const users = ["Rahul", "Aman", "Gungun"];
     const groups = ["React Devs", "Node Enthusiasts", "MERN Stack"];
 
-    const handleChatSelect = (name) => {
-        setSelectedChat(name);
+    const handleChatSelect = (user) => {
+        setSelectedChat(user);
     };
 
+    
+
+   
+
     return (
+        <>
         <Container fluid className={styles.chatApp}>
             <Row className={styles.chatRow}>
                 {/* Sidebar */}
@@ -60,7 +66,7 @@ const ChatUser = () => {
                                             onClick={() => handleChatSelect(user)}
                                         >
                                             <FaUserCircle className="me-2" />
-                                            {user}
+                                            {user.name}
                                         </li>
                                     ))}
                                 </ul>
@@ -92,8 +98,8 @@ const ChatUser = () => {
                                     className={`${styles.backButton} `}
                                     onClick={() => setSelectedChat(null)}
                                 />
-                                <h5>{selectedChat}</h5>
-                                <span className={styles.onlineStatus}>Online</span>
+                                <h5>{selectedChat.name}</h5>
+                                <span className={styles.onlineStatus}>{selectedChat?.is_online }</span>
                             </div>
                             <div className={styles.chatBody}>
                                 <p className={`${styles.message} ${styles.received}`}>Hello!</p>
@@ -122,6 +128,7 @@ const ChatUser = () => {
                 </Col>
             </Row>
         </Container>
+        </>
     );
 };
 

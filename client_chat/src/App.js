@@ -8,6 +8,7 @@ import Login from './Pages/Auth/Login';
 import Signup from './Pages/Auth/Signup';
 import AuthProvider from "./Contexts/AuthContext.jsx"
 import { AuthMiddleware } from './Pages/Auth/AuthMiddleware';
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import Forgot from './Pages/Auth/Forgot.jsx';
 function App() {
   return (

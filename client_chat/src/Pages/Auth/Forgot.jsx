@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import styles from "../../Styles/AuthCss/Forgot.module.css";
-
+import forgotImage from './forgot.jpg'
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +24,7 @@ const ForgotPassword = () => {
       <Row className={styles.rowContainer}>
         <Col md={6} className={styles.imageContainer}>
           <motion.img
-            src="https://source.unsplash.com/600x800/?security,technology"
+            src={forgotImage}
             alt="Forgot Password"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}

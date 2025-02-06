@@ -7,7 +7,7 @@ import { AuthContext } from './../Contexts/AuthContext';
 
 const Header = () => {
   const [expanded, setExpanded] = useState(false); // To manage the toggle state for mobile menu
-  const { isAuthenticated } = useContext(AuthContext); // Access auth context
+  const { isAuthenticated ,LogoutUser} = useContext(AuthContext); // Access auth context
 
   return (
     <Navbar expanded={expanded} expand="lg" className={styles.navbar}>
@@ -39,7 +39,7 @@ const Header = () => {
               >
                 <NavDropdown.Item as={Link} to="/profile">Profile</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/settings">Settings</NavDropdown.Item>
-                <NavDropdown.Item href="#">Something else here</NavDropdown.Item>
+                <NavDropdown.Item onClick={LogoutUser}>LogOut</NavDropdown.Item>
               </NavDropdown>
             ) : (
               // If not authenticated, show login and signup links
