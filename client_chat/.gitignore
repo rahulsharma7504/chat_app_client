@@ -13,6 +13,7 @@
 
 # misc
 .DS_Store
+.env
 .env.local
 .env.development.local
 .env.test.local
@@ -21,6 +22,12 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-env/
 
-/chat_app_server/
+# Ignore environment files
+.env
+
+# Ignore server node_modules
+/chat_app_server/node_modules
+
+# Ignore server build files
+/chat_app_server/build
