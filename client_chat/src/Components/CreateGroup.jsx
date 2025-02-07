@@ -3,10 +3,12 @@ import { Modal, Button, Form, Dropdown, DropdownButton, ListGroup } from 'react-
 import { BsFillGearFill } from 'react-icons/bs';
 import { BsPersonAdd, BsTrash } from 'react-icons/bs';
 import styles from '../Styles/CreateGroup.module.css'
+import { useAuth } from '../Contexts/AuthContext';
 
 
-const CreateGroupModal = ({ show, setShow, users }) => {
+const CreateGroupModal = ({ show, setShow }) => {
   const [groupName, setGroupName] = useState('');
+  const {users } = useAuth();
   const [groupImage, setGroupImage] = useState(null);
   const [userLimit, setUserLimit] = useState(10);
   const [selectedUsers, setSelectedUsers] = useState([]);
