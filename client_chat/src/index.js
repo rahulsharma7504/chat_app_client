@@ -10,10 +10,15 @@ import { ChatProvider } from './Contexts/ChatContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <>
+
         <ChatProvider>
+
             <ToastProvider>
-                <App />
+
+                    <App />
+
             </ToastProvider>
+
         </ChatProvider>
     </>
 );

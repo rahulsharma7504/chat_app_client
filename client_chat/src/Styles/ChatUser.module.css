@@ -1,6 +1,6 @@
 /* Chat App Container */
 .chatApp {
-  height: 86vh;
+  height: 87vh;
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
@@ -93,13 +93,14 @@
 
 /* Chat Body */
 .chatBody {
-  flex: 1;
+  flex-grow: 1;
   padding: 15px;
   display: flex;
   flex-direction: column;
-  overflow: auto; /* Ensures vertical scrolling */
+  overflow-y: auto; /* Ensures vertical scrolling */
   background: #8f9ca8;
-  height: auto; /* Remove fixed height */
+  max-height: calc(86vh - 100px); /* Adjust height based on header & footer */
+  min-height: 300px; /* Ensure a minimum height */
 }
 
 /* Messages */

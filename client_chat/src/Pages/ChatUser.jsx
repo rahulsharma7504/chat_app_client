@@ -6,8 +6,11 @@ import CreateGroupModal from "../Components/CreateGroup";
 import socket from './../Components/Socket/Socket';
 import { useAuth } from "../Contexts/AuthContext";
 import { useChat } from "../Contexts/ChatContext";
+import { useGroup } from "../Contexts/GroupChatContext";
+import { Link } from "react-router-dom";
 const ChatUser = () => {
-    const { messages, fetchMessages,handleSendMessage } = useChat();
+    const { groups } = useGroup();
+    const { messages, fetchMessages, handleSendMessage, fetchGroupMessages } = useChat();
     const { isAuthenticated, users } = useAuth();
     const [activeTab, setActiveTab] = useState("users");
     const [selectedChat, setSelectedChat] = useState(null);
@@ -15,17 +18,27 @@ const ChatUser = () => {
     const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
 
 
-var UserId=JSON.parse(localStorage.getItem('user'))._id;
+    var UserId = JSON.parse(localStorage.getItem('user')).userData?._id;
 
 
-    const groups = ["React Devs", "Node Enthusiasts", "MERN Stack"];
 
     const handleChatSelect = (user) => {
-        setSelectedChat(user);
+        setSelectedChat({ ...user, isGroup: false });
+        fetchMessages(user._id);
     };
 
 
+    const handleGroupSelect = (group) => {
+        setSelectedChat({ ...group, isGroup: true });
+        fetchGroupMessages(group._id);
+    };
 
+    const handleSend = () => {
+        if (selectedChat) {
+            handleSendMessage(UserId, selectedChat._id, message, selectedChat.isGroup);
+            setMessage('');
+        }
+    };
 
 
     return (
@@ -69,10 +82,9 @@ var UserId=JSON.parse(localStorage.getItem('user'))._id;
                                                     src={user.image}
                                                     class="img-fluid rounded-top p-2 m-2"
                                                     alt="user"
-                                                    style={{ width: "40px", height: "40px" }}
+                                                    style={{ width: "40px", height: "40px", borderRadius: '50%' }}
                                                 />
 
-                                                <FaUserCircle className="me-2" />
                                                 {user.name}
                                             </li>
                                         ))}
@@ -80,14 +92,19 @@ var UserId=JSON.parse(localStorage.getItem('user'))._id;
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="groups">
                                     <ul className="list-unstyled">
-                                        {groups.map((group, index) => (
-                                            <li
+                                        {groups?.map((group, index) => (
+                                            <li as={Link}
                                                 key={index}
                                                 className={styles.userItem}
-                                                onClick={() => handleChatSelect(group)}
+                                                onClick={() => handleGroupSelect(group)}
                                             >
-                                                <FaUsers className="me-2" />
-                                                {group}
+                                                <img
+                                                    src={group?.image}
+                                                    className="img-fluid  m-2"
+                                                    alt="group"
+                                                    style={{ width: "40px", height: "40px", borderRadius: '50%' }}
+                                                />
+                                                {group?.name}
                                             </li>
                                         ))}
                                     </ul>
@@ -110,11 +127,33 @@ var UserId=JSON.parse(localStorage.getItem('user'))._id;
                                 </div>
                                 <div className={styles.chatBody}>
                                     {
-                                        messages?.length > 0 ?
-                                            messages.map((message, index) => (
-                                                <p key={index} className={`${styles.message} ${message.sender === selectedChat._id ? styles.received : styles.sent}`}>{message.message}</p>
-                                            )) :
+                                        Array.isArray(messages) && messages.length > 0 ? (
+                                            selectedChat?.isGroup ? (
+                                                messages.map((message, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className={`${styles.message} ${message.senderId === UserId ? styles.sent : styles.received}`}
+                                                    >
+                                                        <div className={styles.messageContent}>
+                                                            <p>{message.message}</p>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                messages.map((message, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className={`${styles.message} ${message.sender === UserId ? styles.sent : styles.received}`}
+                                                    >
+                                                        <div className={styles.messageContent}>
+                                                            <p>{message.message}</p>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            )
+                                        ) : (
                                             <p className={`${styles.message} ${styles.received}`}>No messages yet.</p>
+                                        )
                                     }
                                 </div>
                                 <div className={styles.chatFooter}>
@@ -127,9 +166,8 @@ var UserId=JSON.parse(localStorage.getItem('user'))._id;
                                             value={message}
                                             required
                                             onChange={(e) => setMessage(e.target.value)}
-                                            className="mx-2"
-                                        />
-                                        <Button variant="primary" disabled={!message.length>0} onClick={() => {handleSendMessage(UserId, selectedChat._id, message); setMessage('');}}>
+                                            className="mx-2" />
+                                        <Button variant="primary" disabled={!message.length > 0} onClick={handleSend}>
                                             <FaPaperPlane />
                                         </Button>
                                     </Form>

@@ -4,14 +4,22 @@ import { BsFillGearFill } from 'react-icons/bs';
 import { BsPersonAdd, BsTrash } from 'react-icons/bs';
 import styles from '../Styles/CreateGroup.module.css'
 import { useAuth } from '../Contexts/AuthContext';
+import { useGroup } from '../Contexts/GroupChatContext';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 
 const CreateGroupModal = ({ show, setShow }) => {
   const [groupName, setGroupName] = useState('');
-  const {users } = useAuth();
+  const { users, getAllUsers } = useAuth();
+  const { setGroups, groups } = useGroup();
+const [loading, setLoading] = useState(false);
+  const [groupImages, setGroupImages] = useState(null);
   const [groupImage, setGroupImage] = useState(null);
   const [userLimit, setUserLimit] = useState(10);
   const [selectedUsers, setSelectedUsers] = useState([]);
+
+  // User Group Context
 
   const handleUserSelection = (user) => {
     if (selectedUsers.includes(user)) {
@@ -26,18 +34,66 @@ const CreateGroupModal = ({ show, setShow }) => {
   };
 
   const handleGroupImageChange = (e) => {
-    setGroupImage(URL.createObjectURL(e.target.files[0]));
+    setGroupImages(URL.createObjectURL(e.target.files[0]));
+    setGroupImage(e.target.files[0]);
   };
 
-  const handleSubmit = () => {
-    // Handle group creation logic here
-    console.log({
-      groupName,
-      groupImage,
-      userLimit,
-      selectedUsers,
-    });
-    setShow(false); // Close modal after submission
+  const handleSubmit = async () => {
+
+    if (!groupName || !groupImage || !userLimit || selectedUsers.length === 0) {
+      alert('Please fill all fields');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const GroupData = {
+        groupName,
+        userLimit,
+        selectedUsers: selectedUsers.map((user) => user._id)
+      };
+
+      if (groupImage) {
+        GroupData.groupImage = groupImage;
+      }
+      const formdata = new FormData();
+      formdata.append('groupName', groupName);
+      formdata.append('userLimit', userLimit);
+      formdata.append('groupImage', groupImage);
+      formdata.append('selectedUsers', selectedUsers.map((user) => user._id));
+
+      const userId = JSON.parse(localStorage.getItem('user'))._id;
+
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/create/${userId}`, GroupData,{
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200) {
+        setGroups([...groups, response.data.group]);
+        toast.success(response.data.message);
+        getAllUsers(userId);
+        setLoading(false);
+        setShow(false); // Close modal after submission
+
+        setGroupName('');
+        setUserLimit(10);
+        setSelectedUsers([]);
+        setGroupImages(null);
+        setGroupImage(null);
+      } 
+      else {
+        setLoading(false);
+        toast.error('Failed to create group.');
+      }
+
+    } catch (error) {
+      console.error(error.response ? error.response.data : error.message);
+      toast.error('Error creating group. Please try again.');
+    }
+
   };
 
   return (
@@ -69,9 +125,9 @@ const CreateGroupModal = ({ show, setShow }) => {
               accept="image/*"
               className={styles.formControl}
             />
-            {groupImage && (
+            {groupImages && (
               <div className="mt-3">
-                <img src={groupImage} alt="Group Preview" className={styles.imagePreview} />
+                <img src={groupImages} alt="Group Preview" name='image' className={styles.imagePreview} />
               </div>
             )}
           </Form.Group>
@@ -97,7 +153,7 @@ const CreateGroupModal = ({ show, setShow }) => {
               className={styles.dropdownButton}
             >
               {users.map((user) => (
-                <Dropdown.Item key={user.id} onClick={() => handleUserSelection(user)}>
+                <Dropdown.Item key={user._id} onClick={() => handleUserSelection(user)}>
                   {user.name}
                   {selectedUsers.includes(user) && <span className="ml-2"><BsPersonAdd /></span>}
                 </Dropdown.Item>
@@ -123,7 +179,7 @@ const CreateGroupModal = ({ show, setShow }) => {
         <Button variant="secondary" onClick={() => setShow(false)} className="btnSecondary">
           Close
         </Button>
-        <Button variant="primary" onClick={handleSubmit} className="btnPrimary">
+        <Button variant="primary" onClick={handleSubmit} disabled={loading || !groupName || !groupImage || !userLimit || selectedUsers.length === 0} className="btnPrimary">
           Create Group
         </Button>
       </Modal.Footer>

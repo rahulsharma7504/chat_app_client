@@ -35,7 +35,10 @@ const Login = () => {
 
         toast.success(response.data.message)
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.userData));
+        localStorage.setItem("user", JSON.stringify({
+          userData: response.data.userData,
+          JoinedGroups: response.data.JoinedGroups
+        }));
         getAllUsers(response.data.userData._id);
         handleUserStatus(response.data.userData._id);
         setIsAuthenticated(true)

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Container,
@@ -19,18 +18,16 @@ import {
 } from "react-icons/bs";
 import styles from "../Styles/Profile.module.css";
 import GroupModal from "../Components/Group/GroupModel";
-
+import { useProfile } from "../Contexts/ProfileContext";
+import toast from "react-hot-toast";
 const ProfilePage = () => {
+  const { profileData, setProfileData,updateProfile } = useProfile();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showGroupModal, setShowGroupModal] = useState(false);
-  const [profileData, setProfileData] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "123-456-7890",
-    bio: "Lorem ipsum dolor sit amet.",
-    groupsJoined: 5,
-  });
+  const UserInfo = JSON.parse(localStorage.getItem('user'))?.userData;
+ 
 
+  const JoinedGroups = JSON.parse(localStorage.getItem('user'))?.JoinedGroups?.length || [];
   const [groups, setGroups] = useState([
     { id: 1, name: "React Developers" },
     { id: 2, name: "Node.js Enthusiasts" },
@@ -40,10 +37,14 @@ const ProfilePage = () => {
     { id: 3, name: "MERN Stack Wizards" },
   ]);
 
-  const handleEditProfile = () => {
-    setShowEditModal(false);
+  const handleEditProfile = async () => {
+    const result = await updateProfile(profileData);
+    if (result.success) {
+      setShowEditModal(false);
+    } else {
+      toast.error(result.message);
+    }
   };
-
   const handleLeaveGroup = (groupId) => {
     setGroups(groups.filter((group) => group.id !== groupId));
   };
@@ -51,6 +52,17 @@ const ProfilePage = () => {
   const handleAddGroupMember = () => {
     setShowGroupModal(false);
   };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProfileData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+
+  
 
   return (
     <Container fluid className={styles.profilePage}>
@@ -60,7 +72,8 @@ const ProfilePage = () => {
           <Card className="shadow">
             <Card.Body>
               <div className="text-center mb-3">
-                <BsFillPersonFill size={64} />
+                <img src={profileData?.image} alt="avatar" className="img-fluid rounded mx-auto d-block" />
+                <br />
                 <Button
                   variant="outline-primary"
                   size="sm"
@@ -71,8 +84,7 @@ const ProfilePage = () => {
               </div>
               <h4 className="text-center">{profileData.name}</h4>
               <p className="text-center text-muted">{profileData.email}</p>
-              <p className="text-center text-muted">{profileData.phone}</p>
-              <p className="text-center">{profileData.bio}</p>
+              <p className="text-center text-muted">{profileData.status}</p>
               <Button
                 variant="primary"
                 onClick={() => setShowEditModal(true)}
@@ -83,7 +95,7 @@ const ProfilePage = () => {
               <hr />
               <div className="text-center">
                 <p>
-                  <strong>{profileData.groupsJoined}</strong> Groups Joined
+                  <strong>{JoinedGroups}</strong> Groups Joined
                 </p>
               </div>
             </Card.Body>
@@ -139,19 +151,34 @@ const ProfilePage = () => {
           <Form>
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" placeholder="Enter name" />
+              <Form.Control
+                type="text"
+                value={profileData?.name}
+                name="name"
+                placeholder="Enter name"
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" placeholder="Enter email" />
-            </Form.Group>
-            <Form.Group controlId="formPhone">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control type="text" placeholder="Enter phone" />
+              <Form.Control
+                type="email"
+                value={profileData?.email}
+                name="email"
+                placeholder="Enter email"
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group controlId="formBio">
               <Form.Label>Bio</Form.Label>
-              <Form.Control as="textarea" rows={3} placeholder="Enter bio" />
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={profileData?.bio}
+                name="bio"
+                placeholder="Enter bio"
+                onChange={handleInputChange}
+              />
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -166,8 +193,7 @@ const ProfilePage = () => {
       </Modal>
 
       {/* Group Management Modal */}
-      
-      <GroupModal show={{showGroupModal,setShowGroupModal}}/>
+      <GroupModal show={{ showGroupModal, setShowGroupModal }} />
     </Container>
   );
 };

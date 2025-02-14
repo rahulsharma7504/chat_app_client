@@ -10,25 +10,31 @@ import AuthProvider from "./Contexts/AuthContext.jsx"
 import { AuthMiddleware } from './Pages/Auth/AuthMiddleware';
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import Forgot from './Pages/Auth/Forgot.jsx';
+import { GroupChatProvider } from './Contexts/GroupChatContext.jsx';
+import { ProfileProvider } from './Contexts/ProfileContext.jsx';
 function App() {
   return (
     <>
 
       <Router> {/* Router ko apne app mein wrap karte hain */}
         <AuthProvider>
+          <GroupChatProvider>
+            <ProfileProvider>
 
-          <Layout> {/* Layout ko wrap karte hain */}
+            <Layout> {/* Layout ko wrap karte hain */}
 
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/forgot-password" element={<Forgot />} />
-              <Route path="/" element={<AuthMiddleware><ChatUser /></AuthMiddleware>} />
-              <Route path="/profile" element={<AuthMiddleware><Profile /></AuthMiddleware>} />
-              <Route path="/settings" element={<AuthMiddleware><Settings /></AuthMiddleware>} />
-            </Routes>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/forgot-password" element={<Forgot />} />
+                <Route path="/" element={<AuthMiddleware><ChatUser /></AuthMiddleware>} />
+                <Route path="/profile" element={<AuthMiddleware><Profile /></AuthMiddleware>} />
+                <Route path="/settings" element={<AuthMiddleware><Settings /></AuthMiddleware>} />
+              </Routes>
 
-          </Layout>
+            </Layout>
+            </ProfileProvider>
+          </GroupChatProvider>
         </AuthProvider>
 
       </Router>

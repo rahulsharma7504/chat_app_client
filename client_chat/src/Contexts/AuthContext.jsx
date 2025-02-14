@@ -10,28 +10,33 @@ export const AuthContext = createContext();
 
 // AuthProvider component
 const AuthProvider = ({ children }) => {
+      const [groups, setGroups] = useState([]);
+  
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
   const [cookies] = useCookies(['token']);
 
   useEffect(() => {
-    const token = localStorage.getItem('token') // Get token from cookies
-
+    const token = localStorage.getItem('token'); // Get token from cookies
+  
     if (token) {
       setIsAuthenticated(true);
     } else {
-      navigate('/login');
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/signup') {
+        navigate('/login');
+      }
       setIsAuthenticated(false);
     }
-    const userId = JSON.parse(localStorage.getItem('user'))?._id;
+    const userId = JSON.parse(localStorage.getItem('user'))?.userData?._id;
     if (userId) {
       getAllUsers(userId);
     }
   }, [navigate]);
 
   const LogoutUser = async () => {
-    socket.emit('status', { status: 'Offline', userId: JSON.parse(localStorage.getItem('user'))?._id });
+    socket.emit('status', { status: 'Offline', userId: JSON.parse(localStorage.getItem('user'))?.userData?._id });
     localStorage.removeItem('user');
     localStorage.removeItem('token');
 
@@ -43,7 +48,8 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/all-users/${id}`);
       if (response.status === 200) {
-        setUsers(response.data);
+        setUsers(response.data.allUsers);
+        setGroups(response.data.userGroups);
       }
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -62,7 +68,7 @@ const AuthProvider = ({ children }) => {
     }
   };
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated,users, setUsers, LogoutUser,getAllUsers ,checkAuth}}>
+    <AuthContext.Provider value={{ isAuthenticated,groups, setGroups, setIsAuthenticated,users, setUsers, LogoutUser,getAllUsers ,checkAuth}}>
       {children}
     </AuthContext.Provider>
   );
