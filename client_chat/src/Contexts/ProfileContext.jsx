@@ -5,13 +5,17 @@ import toast from 'react-hot-toast';
 const ProfileContext = createContext();
 
 export const ProfileProvider = ({ children }) => {
+    const [newMembers, setNewMembers] = useState([]);
+    
     const userInfo = JSON.parse(localStorage.getItem('user'))?.userData;
     const [profileData, setProfileData] = useState({
         name: userInfo?.name || '',
         email: userInfo?.email || '',
         bio: userInfo?.bio || '',
-        image: userInfo?.image || '',
+        image: userInfo?.image || ''
     });
+
+    const existingData = JSON.parse(localStorage.getItem("user"));
 
     const updateProfile = async (updatedData) => {
         try {
@@ -21,9 +25,13 @@ export const ProfileProvider = ({ children }) => {
                 },
             });
 
-            if (response.status === 200) {
+            if (response.status == 200) {
                 setProfileData(response.data);
-                localStorage.setItem('user', JSON.stringify({ userData: response.data }));
+                const updatedData = {
+                    userData: response.data, // yeh updated user data hoga
+                    JoinedGroups: existingData ? existingData.JoinedGroups : []
+                };
+                localStorage.setItem('user', JSON.stringify(updatedData));
                 toast.success('Profile updated successfully');
                 return { success: true, message: 'Profile updated successfully' };
             } else {
@@ -35,8 +43,39 @@ export const ProfileProvider = ({ children }) => {
         }
     };
 
+    const handleAddGroupMember = async (groupId, newMembers, groupLimit) => {
+        try {
+            if (newMembers.length > groupLimit) {
+                toast.error(`Cannot add more than ${groupLimit} members.`);
+                return { success: false, message: `Cannot add more than ${groupLimit} members.` };
+            }
+
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/group/add-users`, {
+                groupId,
+                newMembers,
+                groupLimit
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.status === 200) {
+                toast.success('Members added successfully');
+                return { success: true, message: 'Members added successfully' };
+            } else {
+                toast.error('Failed to add members');
+                return { success: false, message: 'Failed to add members' };
+            }
+        } catch (error) {
+            console.error('Error adding members:', error);
+            toast.error('Server error');
+            return { success: false, message: 'Server error' };
+        }
+    };
+
     return (
-        <ProfileContext.Provider value={{ profileData, setProfileData, updateProfile }}>
+        <ProfileContext.Provider value={{ profileData, newMembers, setNewMembers, setProfileData, updateProfile, handleAddGroupMember }}>
             {children}
         </ProfileContext.Provider>
     );

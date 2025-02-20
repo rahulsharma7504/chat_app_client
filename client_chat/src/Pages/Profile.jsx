@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -20,22 +20,29 @@ import styles from "../Styles/Profile.module.css";
 import GroupModal from "../Components/Group/GroupModel";
 import { useProfile } from "../Contexts/ProfileContext";
 import toast from "react-hot-toast";
+import { useAuth } from "../Contexts/AuthContext";
+import { useGroup } from "../Contexts/GroupChatContext";
+import socket from "../Components/Socket/Socket";
 const ProfilePage = () => {
-  const { profileData, setProfileData,updateProfile } = useProfile();
+  const { handleLeaveGroup } = useGroup();
+  const { profileData, setProfileData, updateProfile } = useProfile();
   const [showEditModal, setShowEditModal] = useState(false);
+  const [groupDetails, setGroupDetails] = useState(null);
   const [showGroupModal, setShowGroupModal] = useState(false);
+  const { groups, setGroups } = useAuth();
   const UserInfo = JSON.parse(localStorage.getItem('user'))?.userData;
- 
 
-  const JoinedGroups = JSON.parse(localStorage.getItem('user'))?.JoinedGroups?.length || [];
-  const [groups, setGroups] = useState([
-    { id: 1, name: "React Developers" },
-    { id: 2, name: "Node.js Enthusiasts" },
-  ]);
+  const [joinedGroups, setJoinedGroups] = useState([]);
+  const [ownGroups, setOwnGroups] = useState([]);
 
-  const [ownGroups, setOwnGroups] = useState([
-    { id: 3, name: "MERN Stack Wizards" },
-  ]);
+  useEffect(() => {
+    // Filter joined groups and own groups
+    const userJoinedGroups = groups.filter(group => group.users.includes(UserInfo?._id));
+    const userOwnGroups = groups.filter(group => group.createdBy === UserInfo?._id);
+
+    setJoinedGroups(userJoinedGroups);
+    setOwnGroups(userOwnGroups);
+  }, [groups, UserInfo?._id]);
 
   const handleEditProfile = async () => {
     const result = await updateProfile(profileData);
@@ -45,13 +52,8 @@ const ProfilePage = () => {
       toast.error(result.message);
     }
   };
-  const handleLeaveGroup = (groupId) => {
-    setGroups(groups.filter((group) => group.id !== groupId));
-  };
 
-  const handleAddGroupMember = () => {
-    setShowGroupModal(false);
-  };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,8 +63,27 @@ const ProfilePage = () => {
     }));
   };
 
+  const handleGroupManage = (groupDetails) => {
+    setGroupDetails(groupDetails);
+    setShowGroupModal(true)
 
-  
+  }
+
+
+  const increaseGroupLimit = () => {
+    setGroupDetails((prevDetails) => ({
+      ...prevDetails,
+      userLimit: prevDetails?.userLimit + 1,
+    }));
+  };
+
+  const decreaseGroupLimit = () => {
+    setGroupDetails((prevDetails) => ({
+      ...prevDetails,
+      userLimit: prevDetails?.userLimit - 1,
+    }));
+
+  };
 
   return (
     <Container fluid className={styles.profilePage}>
@@ -95,7 +116,7 @@ const ProfilePage = () => {
               <hr />
               <div className="text-center">
                 <p>
-                  <strong>{JoinedGroups}</strong> Groups Joined
+                  <strong>{joinedGroups.length}</strong> Groups Joined
                 </p>
               </div>
             </Card.Body>
@@ -107,13 +128,13 @@ const ProfilePage = () => {
           <Card className="shadow mb-4">
             <Card.Header>Joined Groups</Card.Header>
             <ListGroup variant="flush">
-              {groups.map((group) => (
-                <ListGroup.Item key={group.id} className="d-flex justify-content-between">
+              {joinedGroups.map((group) => (
+                <ListGroup.Item key={group._id} className="d-flex justify-content-between">
                   <span>{group.name}</span>
                   <Button
                     variant="outline-danger"
                     size="sm"
-                    onClick={() => handleLeaveGroup(group.id)}
+                    onClick={() => handleLeaveGroup(group._id, UserInfo)}
                   >
                     <BsTrash /> Leave
                   </Button>
@@ -131,7 +152,7 @@ const ProfilePage = () => {
                   <Button
                     variant="outline-primary"
                     size="sm"
-                    onClick={() => setShowGroupModal(true)}
+                    onClick={() => handleGroupManage(group)}
                   >
                     <BsGearFill /> Manage
                   </Button>
@@ -193,7 +214,7 @@ const ProfilePage = () => {
       </Modal>
 
       {/* Group Management Modal */}
-      <GroupModal show={{ showGroupModal, setShowGroupModal }} />
+      <GroupModal show={{ increaseGroupLimit, decreaseGroupLimit, groupDetails, showGroupModal, setShowGroupModal }} />
     </Container>
   );
 };

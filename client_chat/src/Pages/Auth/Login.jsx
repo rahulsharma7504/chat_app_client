@@ -68,10 +68,13 @@ const Login = () => {
       if (res.status === 200) {
         toast.success('Login Successfully');
         localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("user", JSON.stringify({
+          userData: res.data.userData,
+          JoinedGroups: res.data.JoinedGroups
+        }));
         setIsAuthenticated(true);
-        getAllUsers(res.data.user._id)
-        handleUserStatus(res.data.user._id);
+        getAllUsers(res.data.userData._id)
+        handleUserStatus(res.data.userData._id);
         navigate('/');
       }
     } catch (error) {

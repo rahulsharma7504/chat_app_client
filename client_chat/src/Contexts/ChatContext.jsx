@@ -30,7 +30,7 @@ const ChatProvider = ({ children }) => {
 
     const fetchMessages = async (userId) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat/?userId1=${userId}&userId2=${JSON.parse(localStorage.getItem('user'))._id}`);
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat/?userId1=${userId}&userId2=${JSON.parse(localStorage.getItem('user')).userData._id}`);
             setMessages(response.data);
         } catch (err) {
             console.error(err);

@@ -25,6 +25,7 @@ const AuthProvider = ({ children }) => {
     } else {
       const currentPath = window.location.pathname;
       if (currentPath !== '/signup') {
+        
         navigate('/login');
       }
       setIsAuthenticated(false);
