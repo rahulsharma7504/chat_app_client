@@ -63,7 +63,7 @@ const [loading, setLoading] = useState(false);
       formdata.append('groupImage', groupImage);
       formdata.append('selectedUsers', selectedUsers.map((user) => user._id));
 
-      const userId = JSON.parse(localStorage.getItem('user'))._id;
+      const userId = JSON.parse(localStorage.getItem('user')).userData._id;
 
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/create/${userId}`, GroupData,{
         headers: {
@@ -92,6 +92,9 @@ const [loading, setLoading] = useState(false);
     } catch (error) {
       console.error(error.response ? error.response.data : error.message);
       toast.error('Error creating group. Please try again.');
+    }
+    finally{
+      setLoading(false)
     }
 
   };

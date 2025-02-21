@@ -6,7 +6,7 @@ const ProfileContext = createContext();
 
 export const ProfileProvider = ({ children }) => {
     const [newMembers, setNewMembers] = useState([]);
-    
+
     const userInfo = JSON.parse(localStorage.getItem('user'))?.userData;
     const [profileData, setProfileData] = useState({
         name: userInfo?.name || '',
@@ -25,7 +25,7 @@ export const ProfileProvider = ({ children }) => {
                 },
             });
 
-            if (response.status == 200) {
+            if (response.status === 200) {
                 setProfileData(response.data);
                 const updatedData = {
                     userData: response.data, // yeh updated user data hoga
@@ -44,29 +44,35 @@ export const ProfileProvider = ({ children }) => {
     };
 
     const handleAddGroupMember = async (groupId, newMembers, groupLimit) => {
+        console.log(groupId, newMembers, groupLimit)
         try {
             if (newMembers.length > groupLimit) {
                 toast.error(`Cannot add more than ${groupLimit} members.`);
                 return { success: false, message: `Cannot add more than ${groupLimit} members.` };
             }
-
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/group/add-users`, {
-                groupId,
-                newMembers,
-                groupLimit
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.status === 200) {
-                toast.success('Members added successfully');
-                return { success: true, message: 'Members added successfully' };
+            if (newMembers.length === 0) {
+                toast.success('Group Updated');
             } else {
-                toast.error('Failed to add members');
-                return { success: false, message: 'Failed to add members' };
+                const response = await axios.put(`${process.env.REACT_APP_API_URL}/group/add-users`, {
+                    groupId,
+                    newMembers,
+                    groupLimit
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.status === 200) {
+                    toast.success('Members added successfully');
+                    return { success: true, message: 'Members added successfully' };
+                } else {
+                    toast.error('Failed to add members');
+                    return { success: false, message: 'Failed to add members' };
+                }
             }
+
+
         } catch (error) {
             console.error('Error adding members:', error);
             toast.error('Server error');

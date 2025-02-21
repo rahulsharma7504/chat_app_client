@@ -6,12 +6,12 @@ import ManageMembersTab from './MembersTab';
 import { useAuth } from '../../Contexts/AuthContext';
 import { useProfile } from '../../Contexts/ProfileContext';
 
-const GroupModal = ({ show, showGroupModal, setShowGroupModal }) => {
+const GroupModal = ({ show, increaseGroupLimit,decreaseGroupLimit,groupDetails,showGroupModal, setShowGroupModal }) => {
   const [activeTab, setActiveTab] = useState('details'); // Track active tab
   const { users } = useAuth();
   const { handleAddGroupMember, newMembers } = useProfile();
   return (
-    <Modal show={show.showGroupModal} onHide={() => show.setShowGroupModal(false)} size="lg">
+    <Modal show={showGroupModal} onHide={() => setShowGroupModal(false)} size="lg">
       <Modal.Header closeButton>
         <Modal.Title>Manage Group</Modal.Title>
       </Modal.Header>
@@ -30,16 +30,15 @@ const GroupModal = ({ show, showGroupModal, setShowGroupModal }) => {
               <GroupDetailsTab />
             </Tab.Pane>
             <Tab.Pane eventKey="members">
-              <ManageMembersTab groupDetails={{ groupDetails: show.groupDetails, increaseGroupLimit: show.increaseGroupLimit(), decreaseGroupLimit: show.decreaseGroupLimit() }} />
+              <ManageMembersTab groupDetails={{ groupDetails: groupDetails, increaseGroupLimit: increaseGroupLimit, decreaseGroupLimit: decreaseGroupLimit }} />
             </Tab.Pane>
-          </Tab.Content>
+          </Tab.Content> 
         </Tab.Container>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => show.setShowGroupModal(false)}>
-          Close
+        <Button variant="secondary" onClick={() => setShowGroupModal(false)}>  Close
         </Button>
-        <Button variant="primary" onClick={handleAddGroupMember(show?.groupDetails?._id, newMembers, show?.groupDetails?.userLimit)}>
+        <Button variant="primary" onClick={()=>handleAddGroupMember(groupDetails?._id, newMembers, groupDetails?.userLimit)}>
           Save Changes
         </Button>
       </Modal.Footer>

@@ -23,6 +23,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../Contexts/AuthContext";
 import { useGroup } from "../Contexts/GroupChatContext";
 import socket from "../Components/Socket/Socket";
+
 const ProfilePage = () => {
   const { handleLeaveGroup } = useGroup();
   const { profileData, setProfileData, updateProfile } = useProfile();
@@ -53,8 +54,6 @@ const ProfilePage = () => {
     }
   };
 
-
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfileData((prevData) => ({
@@ -65,24 +64,21 @@ const ProfilePage = () => {
 
   const handleGroupManage = (groupDetails) => {
     setGroupDetails(groupDetails);
-    setShowGroupModal(true)
-
-  }
-
+    setShowGroupModal(true);
+  };
 
   const increaseGroupLimit = () => {
     setGroupDetails((prevDetails) => ({
       ...prevDetails,
-      userLimit: prevDetails?.userLimit + 1,
+      userLimit: prevDetails.userLimit + 1,
     }));
   };
 
   const decreaseGroupLimit = () => {
     setGroupDetails((prevDetails) => ({
       ...prevDetails,
-      userLimit: prevDetails?.userLimit - 1,
+      userLimit: prevDetails.userLimit - 1,
     }));
-
   };
 
   return (
@@ -214,7 +210,15 @@ const ProfilePage = () => {
       </Modal>
 
       {/* Group Management Modal */}
-      <GroupModal show={{ increaseGroupLimit, decreaseGroupLimit, groupDetails, showGroupModal, setShowGroupModal }} />
+      {groupDetails && (
+        <GroupModal
+          increaseGroupLimit={increaseGroupLimit}
+          decreaseGroupLimit={decreaseGroupLimit}
+          groupDetails={groupDetails}
+          showGroupModal={showGroupModal}
+          setShowGroupModal={setShowGroupModal}
+        />
+      )}
     </Container>
   );
 };

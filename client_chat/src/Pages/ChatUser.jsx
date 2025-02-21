@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Container, Row, Col, Tab, Nav, Form, Button } from "react-bootstrap";
 import { FaUserCircle, FaUsers, FaArrowLeft, FaSmile, FaPaperclip, FaPaperPlane } from "react-icons/fa";
 import styles from "../Styles/ChatUser.module.css";
@@ -8,6 +8,7 @@ import { useAuth } from "../Contexts/AuthContext";
 import { useChat } from "../Contexts/ChatContext";
 import { useGroup } from "../Contexts/GroupChatContext";
 import { Link } from "react-router-dom";
+
 const ChatUser = () => {
     const { groups } = useGroup();
     const { messages, fetchMessages, handleSendMessage, fetchGroupMessages } = useChat();
@@ -17,16 +18,14 @@ const ChatUser = () => {
     const [message, setMessage] = useState("");
     const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
 
+    const chatBodyRef = useRef(null);
 
     var UserId = JSON.parse(localStorage.getItem('user')).userData?._id;
-
-
 
     const handleChatSelect = (user) => {
         setSelectedChat({ ...user, isGroup: false });
         fetchMessages(user._id);
     };
-
 
     const handleGroupSelect = (group) => {
         setSelectedChat({ ...group, isGroup: true });
@@ -40,6 +39,11 @@ const ChatUser = () => {
         }
     };
 
+    useEffect(() => {
+        if (chatBodyRef.current) {
+            chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+        }
+    }, [messages]);
 
     return (
         <>
@@ -80,11 +84,10 @@ const ChatUser = () => {
                                             >
                                                 <img
                                                     src={user.image}
-                                                    class="img-fluid rounded-top p-2 m-2"
+                                                    className="img-fluid rounded-top p-2 m-2"
                                                     alt="user"
                                                     style={{ width: "40px", height: "40px", borderRadius: '50%' }}
                                                 />
-
                                                 {user.name}
                                             </li>
                                         ))}
@@ -125,7 +128,7 @@ const ChatUser = () => {
                                     <h5>{selectedChat.name}</h5>
                                     <span className={styles.onlineStatus}>{selectedChat?.is_online}</span>
                                 </div>
-                                <div className={styles.chatBody}>
+                                <div className={styles.chatBody} ref={chatBodyRef}>
                                     {
                                         Array.isArray(messages) && messages.length > 0 ? (
                                             selectedChat?.isGroup ? (
