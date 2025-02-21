@@ -31,3 +31,4 @@ yarn-error.log*
 
 # Ignore server build files
 /chat_app_server/build
+.vercel

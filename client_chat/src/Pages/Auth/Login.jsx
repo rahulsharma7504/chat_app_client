@@ -61,7 +61,7 @@ const Login = () => {
     const token = credentialResponse.credential;
 
     try {
-      const res = await axios.post("http://localhost:4000/api/auth/google", {
+      const res = await axios.post("https://standing-lettuce-production.up.railway.app/api/auth/google", {
         token,
       });
 
