@@ -14,7 +14,7 @@ import { GroupChatProvider } from './Contexts/GroupChatContext.jsx';
 import { ProfileProvider } from './Contexts/ProfileContext.jsx';
 function App() {
   return (
-    <>
+    <> 
 
       <Router> {/* Router ko apne app mein wrap karte hain */}
         <AuthProvider>
@@ -27,6 +27,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/forgot-password" element={<Forgot />} />
+
                 <Route path="/" element={<AuthMiddleware><ChatUser /></AuthMiddleware>} />
                 <Route path="/profile" element={<AuthMiddleware><Profile /></AuthMiddleware>} />
                 <Route path="/settings" element={<AuthMiddleware><Settings /></AuthMiddleware>} />

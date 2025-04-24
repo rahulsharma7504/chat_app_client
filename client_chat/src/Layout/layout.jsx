@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
         <main>
           {children} {/* Ye content hoga jo Layout component ke andar diya jayega */}
         </main>
-      {/* <Footer /> */}
+      <Footer />
       </>
   );
 };

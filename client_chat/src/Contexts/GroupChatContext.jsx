@@ -11,8 +11,12 @@ export const GroupChatProvider = ({ children }) => {
 
   
     const handleLeaveGroup = async (groupId, userId) => {
-        try {
-            console.log(groupId, userId._id);
+        try {   
+            // Check if groupId and userId are valid
+            if (!groupId || !userId) {
+                toast.error('Invalid group or user ID');
+                return;
+            }
             
             // Sending data as the second argument in the correct format
             const response = await axios.delete(

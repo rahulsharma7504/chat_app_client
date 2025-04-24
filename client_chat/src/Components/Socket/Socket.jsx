@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:4000", { transports: ["websocket"] });
+const socket = io("https://chat-app-server-6z4y.onrender.com", { transports: ["websocket"] });
 
 
 const Socket = ()=>{

@@ -28,21 +28,20 @@ const SignUp = () => {
         formData.append('image', image);
       }
   
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/signup`, formData, {
+      const res = await axios.post(`https://chat-app-server-6z4y.onrender.com/api/signup`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
   
-      if (res.status == 200) {
-        toast.success('Signup successful!');
+      if (res.status == 201) {
         setName('');
         setEmail('');
         setPassword('');
         setImage(null);
         // Redirect to login page or dashboard
         navigate('/login');
-        toast.success(res.data.message);
+        toast.success(res.data?.message);
 
       }
     } catch (error) {

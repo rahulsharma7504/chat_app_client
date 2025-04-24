@@ -133,7 +133,7 @@ const Login = () => {
               </Form.Group>
 
               <div className={styles.linksContainer}>
-                <Link to={'/forgot-password'}><p className={styles.forgotPassword}>Forgot Password?</p></Link>
+                <Link to="/forgot-password"><p className={styles.forgotPassword}>Forgot Password?</p></Link>
               </div>
 
               <Button type="submit" variant="primary" className={styles.loginButton} block disabled={isLoading}>
