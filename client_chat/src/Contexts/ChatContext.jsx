@@ -50,6 +50,15 @@ const ChatProvider = ({ children }) => {
         try {
             if (isGroup) {
                 socket.emit('sendGroupMessage', { senderId, groupId: receiverId, message });
+                socket.on('message', (newMessage) => {
+                    setMessages((prevMessages) => {
+                        if (Array.isArray(prevMessages)) {
+                            return [...prevMessages, newMessage];
+                        } else {
+                            return [newMessage];
+                        }
+                    });
+                });
                 
             } else {
                 socket.emit('sendMessage', { senderId, receiverId, message });
