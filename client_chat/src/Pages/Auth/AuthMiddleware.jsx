@@ -1,14 +1,32 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../Contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+
 export const AuthMiddleware = ({ children }) => {
-  const navigate=useNavigate();
-  const { isAuthenticated } = useContext(AuthContext); // Use context to check authentication
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [shouldRender, setShouldRender] = useState(false);
 
-  if (!isAuthenticated) {
-    navigate('/login')
-  }
+  useEffect(() => {
+    const publicPaths = ['/login', '/signup'];
+    const isForgotPassword = location.pathname === '/forgot-password';
+    const isPublicPath = publicPaths.includes(location.pathname);
 
-  return isAuthenticated ? children : null; // Render children only if authenticated
+    // Block unauthenticated users from private pages
+    if (!isAuthenticated && !isPublicPath && !isForgotPassword) {
+      navigate('/login');
+    }
+    // Redirect logged-in users away from login/signup (but NOT forgot-password)
+    else if (isAuthenticated && isPublicPath) {
+      navigate('/');
+    }
+    else {
+      setShouldRender(true); // allow access
+    }
+  }, [isAuthenticated, location.pathname, navigate]);
+
+  if (!shouldRender) return null;
+
+  return <>{children}</>;
 };
-
