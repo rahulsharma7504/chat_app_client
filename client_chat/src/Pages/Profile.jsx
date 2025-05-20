@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Container,
   Row,
@@ -20,6 +20,7 @@ import styles from "../Styles/Profile.module.css";
 import GroupModal from "../Components/Group/GroupModel";
 import { useProfile } from "../Contexts/ProfileContext";
 import toast from "react-hot-toast";
+import axios from "axios";
 import { useAuth } from "../Contexts/AuthContext";
 import { useGroup } from "../Contexts/GroupChatContext";
 import socket from "../Components/Socket/Socket";
@@ -30,8 +31,9 @@ const ProfilePage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [groupDetails, setGroupDetails] = useState(null);
   const [showGroupModal, setShowGroupModal] = useState(false);
-  const { groups, setGroups } = useAuth();
+  const { groups, setGroups } = useAuth(); // groups context might need update if user's own group avatar changes, but not directly relevant for user avatar
   const UserInfo = JSON.parse(localStorage.getItem('user'))?.userData;
+  const avatarInputRef = useRef(null);
 
   const [joinedGroups, setJoinedGroups] = useState([]);
   const [ownGroups, setOwnGroups] = useState([]);
@@ -62,6 +64,48 @@ const ProfilePage = () => {
     }));
   };
 
+    const handleAvatarChange = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Authentication token not found. Please log in again.");
+        return;
+      }
+      
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/avatar/${UserInfo?._id}`,formData,);
+
+      if (response.status === 200) {
+        const updatedUser = response.data.user;
+        // Update profile context
+        setProfileData((prevData) => ({
+          ...prevData,
+          image: updatedUser.image,
+        }));
+        // Update localStorage if user data is stored there comprehensively
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+            storedUser.userData.image = updatedUser.image;
+            localStorage.setItem('user', JSON.stringify(storedUser));
+        }
+        toast.success(response.data.message || "Avatar updated successfully!");
+      } else {
+        toast.error(response.data.message || "Failed to update avatar.");
+      }
+    } catch (error) {
+      console.error("Avatar update error:", error);
+      toast.error(error.response?.data?.message || "An error occurred while updating avatar.");
+    }
+  };
+
   const handleGroupManage = (groupDetails) => {
     setGroupDetails(groupDetails);
     setShowGroupModal(true);
@@ -89,12 +133,19 @@ const ProfilePage = () => {
           <Card className="shadow">
             <Card.Body>
               <div className="text-center mb-3">
-                <img src={profileData?.image} alt="avatar" className="img-fluid rounded mx-auto d-block" />
-                <br />
+                <img src={profileData?.image ? profileData.image + '?t=' + new Date().getTime() : ''} alt="avatar" className="img-fluid rounded mx-auto d-block" style={{ width: '150px', height: '150px', objectFit: 'cover', cursor: 'pointer' }} onClick={() => avatarInputRef.current && avatarInputRef.current.click()} />
+                <input
+                  type="file"
+                  ref={avatarInputRef}
+                  style={{ display: "none" }}
+                  accept="image/*"
+                  onChange={handleAvatarChange} // We will define this function
+                />
                 <Button
                   variant="outline-primary"
                   size="sm"
                   className="mt-2"
+                  onClick={() => avatarInputRef.current && avatarInputRef.current.click()}
                 >
                   Change Avatar
                 </Button>

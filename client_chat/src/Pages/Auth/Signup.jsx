@@ -28,7 +28,7 @@ const SignUp = () => {
         formData.append('image', image);
       }
   
-      const res = await axios.post(`https://chat-app-server-6z4y.onrender.com/api/signup`, formData, {
+      const res = await axios.post(`http://localhost:4000/api/signup`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
