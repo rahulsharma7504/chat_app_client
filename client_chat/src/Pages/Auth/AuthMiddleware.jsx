@@ -3,12 +3,18 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../Contexts/AuthContext';
 
 export const AuthMiddleware = ({ children }) => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
+    if (isLoading) {
+      // Wait until loading finishes
+      setShouldRender(false);
+      return;
+    }
+
     const publicPaths = ['/login', '/signup'];
     const isForgotPassword = location.pathname === '/forgot-password';
     const isPublicPath = publicPaths.includes(location.pathname);
@@ -24,7 +30,7 @@ export const AuthMiddleware = ({ children }) => {
     else {
       setShouldRender(true); // allow access
     }
-  }, [isAuthenticated, location.pathname, navigate]);
+  }, [isAuthenticated, isLoading, location.pathname, navigate]);
 
   if (!shouldRender) return null;
 

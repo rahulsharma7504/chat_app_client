@@ -61,7 +61,7 @@ const Login = () => {
     const token = credentialResponse.credential;
 
     try {
-      const res = await axios.post("https://standing-lettuce-production.up.railway.app/api/auth/google", {
+      const res = await axios.post("https://chat-app-server-6z4y.onrender.com/api/auth/google", {
         token,
       });
 
@@ -75,7 +75,9 @@ const Login = () => {
         setIsAuthenticated(true);
         getAllUsers(res.data.userData._id)
         handleUserStatus(res.data.userData._id);
-        navigate('/');
+        setTimeout(() => {
+          navigate('/');
+        }, 0);
       }
     } catch (error) {
       console.error("Login failed", error);

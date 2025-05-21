@@ -3,11 +3,11 @@ import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 import { GiHamburgerMenu } from 'react-icons/gi'; // Hamburger icon from react-icons
 import styles from '../Styles/Header.module.css'; // CSS module import
 import { Link } from 'react-router-dom';
-import { AuthContext } from './../Contexts/AuthContext';
+import { AuthContext, useAuth } from './../Contexts/AuthContext';
 
 const Header = () => {
   const [expanded, setExpanded] = useState(false); // To manage the toggle state for mobile menu
-  const { isAuthenticated ,LogoutUser} = useContext(AuthContext); // Access auth context
+  const { isAuthenticated, LogoutUser } = useAuth(); // Access auth context
 
   return (
     <Navbar expanded={expanded} expand="lg" className={styles.navbar}>
@@ -39,7 +39,14 @@ const Header = () => {
               >
                 <NavDropdown.Item as={Link} to="/profile">Profile</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/settings">Settings</NavDropdown.Item>
-                <NavDropdown.Item onClick={LogoutUser}>LogOut</NavDropdown.Item>
+                <NavDropdown.Item
+                  onClick={() => {
+                    setExpanded(false); // Close the menu after logout
+                    LogoutUser();
+                  }}
+                >
+                  LogOut
+                </NavDropdown.Item>
               </NavDropdown>
             ) : (
               // If not authenticated, show login and signup links

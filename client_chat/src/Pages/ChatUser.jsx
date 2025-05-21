@@ -3,7 +3,7 @@ import { Container, Row, Col, Tab, Nav, Form, Button } from "react-bootstrap";
 import { FaUserCircle, FaUsers, FaArrowLeft, FaSmile, FaPaperclip, FaPaperPlane } from "react-icons/fa";
 import styles from "../Styles/ChatUser.module.css";
 import CreateGroupModal from "../Components/CreateGroup";
-import socket from './../Components/Socket/Socket';
+import { socket } from './../Components/Socket/Socket';
 import { useAuth } from "../Contexts/AuthContext";
 import { useChat } from "../Contexts/ChatContext";
 import { useGroup } from "../Contexts/GroupChatContext";
@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 
 const ChatUser = () => {
     const { groups } = useGroup();
-    const { messages, fetchMessages, handleSendMessage, fetchGroupMessages } = useChat();
+    const { messages, fetchMessages, handleSendMessage, fetchGroupMessages, addMessage, joinGroup } = useChat();
     const { isAuthenticated, users } = useAuth();
     const [activeTab, setActiveTab] = useState("users");
     const [selectedChat, setSelectedChat] = useState(null);
@@ -22,6 +22,67 @@ const ChatUser = () => {
 
     var UserId = JSON.parse(localStorage.getItem('user')).userData?._id;
 
+    // Update selectedChat with latest online status from users list
+    useEffect(() => {
+        if (selectedChat && !selectedChat.isGroup) {
+            const updatedUser = users.find(user => user._id === selectedChat._id);
+            if (updatedUser && updatedUser.is_online !== selectedChat.is_online) {
+                setSelectedChat(prev => ({ ...prev, is_online: updatedUser.is_online }));
+            }
+        }
+    }, [users, selectedChat]);
+
+    useEffect(() => {
+        socket.on('message', (newMessage) => {
+            if (!selectedChat) return;
+            // Check if newMessage belongs to selectedChat
+            if (selectedChat.isGroup) {
+                if (newMessage.groupId === selectedChat._id) {
+                    addMessage(newMessage);
+                }
+            } else {
+                // Direct message: check sender and receiver
+                if (
+                    (newMessage.sender === UserId && newMessage.receiver === selectedChat._id) ||
+                    (newMessage.receiver === UserId && newMessage.sender === selectedChat._id)
+                ) {
+                    addMessage(newMessage);
+                }
+            }
+        }); 
+        
+        // add the function to the socket event listener
+
+        return () => {
+            socket.off('message');
+        };
+    }, [selectedChat, UserId, addMessage]);
+
+    useEffect(() => {
+        if (selectedChat) {
+            if (selectedChat.isGroup) {
+                fetchGroupMessages(selectedChat._id);
+            } else {
+                fetchMessages(selectedChat._id);
+            }
+        }
+    }, [selectedChat]);
+
+    useEffect(() => {
+        if (chatBodyRef.current) {
+            chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+    // New useEffect to join all group rooms on initial load or when groups change
+    useEffect(() => {
+        if (groups && groups.length > 0) {
+            groups.forEach(group => {
+                joinGroup(group._id);
+            });
+        }
+    }, [groups, joinGroup]);
+
     const handleChatSelect = (user) => {
         setSelectedChat({ ...user, isGroup: false });
         fetchMessages(user._id);
@@ -30,7 +91,9 @@ const ChatUser = () => {
     const handleGroupSelect = (group) => {
         setSelectedChat({ ...group, isGroup: true });
         fetchGroupMessages(group._id);
+        joinGroup(group._id);
     };
+
 
     const handleSend = () => {
         if (selectedChat) {
@@ -38,12 +101,6 @@ const ChatUser = () => {
             setMessage('');
         }
     };
-
-    useEffect(() => {
-        if (chatBodyRef.current) {
-            chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-        }
-    }, [messages]);
 
     return (
         <>
@@ -139,6 +196,9 @@ const ChatUser = () => {
                                                     >
                                                         <div className={styles.messageContent}>
                                                             <p>{message.message}</p>
+                                                            <small className={styles.timestamp}>
+                                                                {message.timestamp ? new Date(message.timestamp).toLocaleString() : ''}
+                                                            </small>
                                                         </div>
                                                     </div>
                                                 ))
